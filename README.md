@@ -34,7 +34,7 @@ docker.io/cyclenerd/hello-world:latest
 Docker:
 
 ```bash
-docker run "docker.io/cyclenerd/hello-world:latest"
+docker run "cyclenerd/hello-world"
 ```
 
 Podman:
