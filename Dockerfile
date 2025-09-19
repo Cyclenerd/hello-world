@@ -20,5 +20,5 @@ RUN gcc -Oz -static -o '@' hello.c
 RUN strip '@'
 
 FROM scratch
-COPY --from=builder '@' '/bin/hello'
+COPY --from=builder '@' '/@'
 CMD ["/@"]
