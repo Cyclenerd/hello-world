@@ -16,9 +16,9 @@ FROM docker.io/library/alpine:latest as builder
 RUN apk add gcc musl-dev
 ADD hello.c .
 # https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
-RUN gcc -Oz -static -o hello hello.c
-RUN strip hello
+RUN gcc -Oz -static -o '@' hello.c
+RUN strip '@'
 
 FROM scratch
-COPY --from=builder hello /bin/hello
-CMD ["/bin/hello"]
+COPY --from=builder '@' '/bin/hello'
+CMD ["/@"]
