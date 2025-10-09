@@ -68,6 +68,9 @@ This image is inspired by:
 * [Docker Hello World](https://github.com/docker-library/hello-world)
 * [Podman Hello World](https://github.com/containers/PodmanHello)
 
+This project is compiled into a small, static binary to ensure maximum portability and minimal footprint.
+The process is based on the excellent techniques outlined in this article on [Generating Small Static Binaries](https://irq5.io/2019/09/30/generating-small-static-binaries/).
+
 My goal was to explore the limits of container image size reduction.
 
 ## License
