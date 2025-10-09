@@ -13,10 +13,14 @@
 # limitations under the License.
 
 FROM docker.io/library/alpine:latest as builder
+# Architecture component of TARGETPLATFORM. Eg. amd64, arm64
+# https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope
+ARG TARGETARCH
+RUN echo "CPU arch: ${TARGETARCH}"
 RUN apk add gcc musl-dev binutils
 ADD hello.c .
 # https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
-RUN gcc -Oz -s -static -nostartfiles -D DOCKER_ARCH="$(TARGET_ARCH)" -o "hello" "hello.c"
+RUN gcc -Oz -s -static -nostartfiles -D DOCKER_ARCH="\"${TARGETARCH}\"" -o "hello" "hello.c"
 RUN echo "Before strip:" && readelf -S "hello" && echo "Size:" && ls -la "hello"
 RUN strip -R .comment -R .eh_frame -R .tbss -s "hello"
 RUN echo "After strip:" && readelf -S "hello" && echo "Size:" && ls -la "hello"
