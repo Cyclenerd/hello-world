@@ -13,12 +13,14 @@
 # limitations under the License.
 
 FROM docker.io/library/alpine:latest as builder
-RUN apk add gcc musl-dev
+RUN apk add gcc musl-dev binutils
 ADD hello.c .
 # https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
-RUN gcc -Oz -static -o '@' hello.c
-RUN strip '@'
+RUN gcc -Oz -s -static -nostartfiles -D DOCKER_ARCH="$(TARGET_ARCH)" -o "hello" "hello.c"
+RUN echo "Before strip:" && readelf -S "hello" && echo "Size:" && ls -la "hello"
+RUN strip -R .comment -R .eh_frame -R .tbss -s "hello"
+RUN echo "After strip:" && readelf -S "hello" && echo "Size:" && ls -la "hello"
 
 FROM scratch
-COPY --from=builder '@' '/@'
+COPY --from=builder 'hello' '/@'
 CMD ["/@"]

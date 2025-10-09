@@ -4,7 +4,7 @@
 [![Badge: Linux](https://img.shields.io/badge/Linux-FCC624.svg?logo=linux&logoColor=black)](#readme)
 [![Badge: License](https://img.shields.io/github/license/cyclenerd/hello-world)](https://github.com/Cyclenerd/hello-world/blob/master/LICENSE)
 
-Ultra-lightweight Container image (<80 KB uncompressed) that outputs "Hello World."
+Ultra-lightweight Container image (<5 KB uncompressed) that outputs "Hello World."
 
 ```text
 Hello World ...!
