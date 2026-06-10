@@ -20,9 +20,27 @@ RUN echo "CPU arch: ${TARGETARCH}"
 RUN apk add gcc musl-dev binutils
 ADD hello.c .
 # https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
-RUN gcc -Oz -s -static -nostartfiles -D DOCKER_ARCH="\"${TARGETARCH}\"" -o "hello" "hello.c"
+# Size-critical linker flags:
+#   --build-id=none      : drop the .note.gnu.build-id section
+#   -z max-page-size=4096 : avoid 64K page alignment padding (huge win on aarch64)
+#   -z norelro           : drop the RELRO program header / padding
+#   --no-eh-frame-hdr    : drop the exception-frame header
+# -no-pie avoids the static-PIE dynamic sections (.dynsym/.dynamic/...) that
+# musl-gcc emits by default, which shrinks the binary significantly.
+RUN gcc -Oz -s -static -no-pie -nostartfiles \
+	-Wl,--build-id=none \
+	-Wl,-z,max-page-size=0x1000 \
+	-Wl,-z,norelro \
+	-Wl,--no-eh-frame-hdr \
+	-D DOCKER_ARCH="\"${TARGETARCH}\"" -o "hello" "hello.c"
 RUN echo "Before strip:" && readelf -S "hello" && echo "Size:" && ls -la "hello"
-RUN strip -R .comment -R .eh_frame -R .tbss -s "hello"
+RUN strip \
+	-R .comment \
+	-R .eh_frame \
+	-R .tbss \
+	-R .note.gnu.property \
+	-R .note.ABI-tag \
+	-s "hello"
 RUN echo "After strip:" && readelf -S "hello" && echo "Size:" && ls -la "hello"
 
 FROM scratch
